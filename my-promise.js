@@ -42,23 +42,73 @@ Promise.prototype.then = function (onResolved, onRejected) {
     onRejected = typeof onRejected === "function" ? onRejected : function (r) {};
 
     if (self.status === "resolved") {
+        //如果promise1(此处即为this/self)的状态已经确定并且是resolved,我们调用onResolved
+        //因为考虑到可能有throw,所以我们将其包在try/catch中
         promise2 = new Promise(function (resolve, reject) {
-            
+            try {
+                var x = onResolved(self.data);
+                if (x instanceof Promise){  //如果onResolved的返回值是一个Promise对象,直接取它的结果作为promise2的结果
+                    x.then(resolve, reject);
+                }
+                resolve(x); //否则,以它的返回值作为promise2的结果
+            } catch (e) {
+                reject(e);
+            }
         })
         return promise2;
     }
 
     if (self.status === "rejected"){
         promise2 = new Promise(function (resolve, reject) {
+            try {
+                var x = onResolved(self.data);
+                if(x instanceof Promise){
+                    x.then(resolve, reject);
+                }
+                resolve(x);
 
+            } catch (e) {
+                reject(e);
+            }
         });
         return promise2;
     }
     if(self.status === "pending") {
+        //如果当前Promise还处于pending状态,我们不能确定调用onResolved还是onRejected,
+        //只能等到Promise的状态确定后,才能确定如何处理。
+        //所以,需要把两种情况的处理逻辑作为callback放入promise1(此处指self/this)的回调数组里
+        //逻辑本身与self.status === "resolved"快内的if几乎一致
         promise2 = new Promise(function (resolve, reject) {
+
+            var onResolvedCondition = function (value) {
+                try {
+                    var x = onResolved(self.data);
+                    if(x instanceof Promise){
+                        x.then(resolve, reject);
+                    }
+
+                } catch (e) {
+                    reject(e);
+                }
+
+            };
+            self.onResolvedCallback.push(onResolvedCondition);
+
+            var onRejectedCondition = function (reason) {
+                try {
+                    var x = onRejected(self.data);
+                } catch (e){
+                    reject(e);
+                }
+            };
+            self.onRejectedCallback.push(onRejectedCondition);
 
         });
         return promise2;
     }
 
+}
+// 为了下文方便，我们顺便实现一个catch方法
+Promise.prototype.catch = function(onRejected) {
+    return this.then(null, onRejected)
 }
