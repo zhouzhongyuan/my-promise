@@ -4,7 +4,6 @@ function Promise(executor) {
     self.data = undefined;  //Promise的值
     self.onResolvedCallback = [];   //Promise resolve时的回调集,因为Promise结束之前可能有多个回调添加在它上面
     self.onRejectedCallback = [];   //Promise reject时的回调集,因为Promise结束之前可能有多个回调添加在它上面
-    executor(resolve, reject);
     
     function resolve(value) {
         if (self.status === "pending") {
