@@ -11,7 +11,7 @@ function Promise(executor) {
             self.status = "resolved";
             self.data = value;
             for( var i = 0; i < self.onResolvedCallback.length; i++){
-                self.onRejectedCallback[i](value);
+                self.onResolvedCallback[i](value);
             }
 
         }
