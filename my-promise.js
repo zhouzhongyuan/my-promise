@@ -7,10 +7,23 @@ function Promise(executor) {
     executor(resolve, reject);
     
     function resolve(value) {
-        //TODO
+        if (self.status === "pending") {
+            self.status = "resolved";
+            self.data = value;
+            for( var i = 0; i < self.onResolvedCallback.length; i++){
+                self.onRejectedCallback[i](value);
+            }
+
+        }
     }
     function reject(reason) {
-        //TODO
+        if (self.status === "pending") {
+            self.status = "rejected";
+            self.data = reason;
+            for (var i = 0; i < self.onRejectedCallback.length; i++) {
+                self.onRejectedCallback[i](reason);
+            }
+        }
     }
     try{    //考虑到executor执行过程中可能会出错,所以使用try/catch包起来,如果出错,reject这个promise
         executor(resolve, reject);
