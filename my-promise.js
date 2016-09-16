@@ -32,3 +32,33 @@ function Promise(executor) {
         reject(e);
     }
 }
+//then方法接受两个参数,onResolved onRejected分别是Promise成功和失败后的回调
+Promise.prototype.then = function (onResolved, onRejected) {
+    var self = this;
+    var promise2;
+
+    //根据标准,如果then的参数不是function,则我们需要忽略它,此处处理方式如下
+    onResolved = typeof onResolved === "function" ? onResolved : function (v) {};
+    onRejected = typeof onRejected === "function" ? onRejected : function (r) {};
+
+    if (self.status === "resolved") {
+        promise2 = new Promise(function (resolve, reject) {
+            
+        })
+        return promise2;
+    }
+
+    if (self.status === "rejected"){
+        promise2 = new Promise(function (resolve, reject) {
+
+        });
+        return promise2;
+    }
+    if(self.status === "pending") {
+        promise2 = new Promise(function (resolve, reject) {
+
+        });
+        return promise2;
+    }
+
+}
