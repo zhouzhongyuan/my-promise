@@ -37,8 +37,8 @@ Promise.prototype.then = function (onResolved, onRejected) {
     var promise2;
 
     //根据标准,如果then的参数不是function,则我们需要忽略它,此处处理方式如下
-    onResolved = typeof onResolved === "function" ? onResolved : function (v) {};
-    onRejected = typeof onRejected === "function" ? onRejected : function (r) {};
+    onResolved = typeof onResolved === "function" ? onResolved : function (value) { return value};
+    onRejected = typeof onRejected === "function" ? onRejected : function (reason) { return reason};
 
     if (self.status === "resolved") {
         //如果promise1(此处即为this/self)的状态已经确定并且是resolved,我们调用onResolved
