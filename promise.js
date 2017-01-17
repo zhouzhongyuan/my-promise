@@ -1,13 +1,20 @@
 function Promise(fn) {
-    var value = null,
+    var state = 'pending',
+        value = null,
         deferreds = [];
 
     this.then = function (onFulfilled) {
-        deferreds.push(onFulfilled);
+        if (state === 'pending') {
+            deferreds.push(onFulfilled);
+            return this;
+        }
+        onFulfilled(value);
         return this;
     };
 
-    function resolve(value) {
+    function resolve(newValue) {
+        value = newValue;
+        state = 'fulfilled';
         setTimeout(function () {
             deferreds.forEach(function (deferred) {
                 deferred(value);
