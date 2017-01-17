@@ -41,3 +41,4 @@ function Promise(fn) {
 
     fn(resolve);
 }
+module.exports = Promise;
