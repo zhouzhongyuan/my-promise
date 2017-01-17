@@ -8,9 +8,11 @@ function Promise(fn) {
     };
 
     function resolve(value) {
-        deferreds.forEach(function (deferred) {
-            deferred(value);
-        });
+        setTimeout(function () {
+            deferreds.forEach(function (deferred) {
+                deferred(value);
+            });
+        }, 0);
     }
 
     fn(resolve);
