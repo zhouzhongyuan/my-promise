@@ -4,6 +4,7 @@ function Promise(fn) {
 
     this.then = function (onFulfilled) {
         deferreds.push(onFulfilled);
+        return this;
     };
 
     function resolve(value) {
