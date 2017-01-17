@@ -23,11 +23,18 @@ function Promise(fn) {
     }
 
     function resolve(newValue) {
-        value = newValue;
+        if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
+            var then = newValue.then;
+            if (typeof then === 'function') {
+                then.call(newValue, resolve);
+                return;
+            }
+        }
         state = 'fulfilled';
+        value = newValue;
         setTimeout(function () {
             deferreds.forEach(function (deferred) {
-                deferred(value);
+                handle(deferred);
             });
         }, 0);
     }
